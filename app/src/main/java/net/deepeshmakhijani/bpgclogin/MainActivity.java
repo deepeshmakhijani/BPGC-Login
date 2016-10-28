@@ -1,13 +1,14 @@
 package net.deepeshmakhijani.bpgclogin;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -39,11 +40,21 @@ public class MainActivity extends AppCompatActivity {
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     Button login_btn;
     EditText user_data, pass_data;
-
+    String network = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         HttpsTrustManager.allowAllSSL();
-
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mwifi = connManager.getActiveNetworkInfo();
+        if (connManager.getActiveNetworkInfo() != null) {
+            network = mwifi.getTypeName();
+        }
+        HttpsTrustManager.allowAllSSL();
+        if (network != null && !network.equals("WIFI")) {
+            Toast.makeText(this, "Connect to a wifi network", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Connect to a BPGC WiFi network", Toast.LENGTH_LONG).show();
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -126,11 +137,34 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public static class HttpsTrustManager implements X509TrustManager {
 
         private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
         private static TrustManager[] trustManagers;
 
+        // high level certificate permissions
         public static void allowAllSSL() {
             HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
 
@@ -186,27 +220,5 @@ public class MainActivity extends AppCompatActivity {
             return _AcceptedIssuers;
         }
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
