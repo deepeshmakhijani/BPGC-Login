@@ -3,6 +3,8 @@ package net.deepeshmakhijani.bpgclogin;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.cert.CertificateException;
@@ -34,11 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String URL1 = "https://20.20.2.11/login.html";
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
-    public static String result1, result2;
     public OkHttpClient client = getUnsafeOkHttpClient();
     Button login_btn;
     EditText user_data, pass_data;
-    TextView textView1, textView2;
     String network = null;
 
     private static OkHttpClient getUnsafeOkHttpClient() {
@@ -108,17 +107,11 @@ public class MainActivity extends AppCompatActivity {
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
 
-        textView1 = (TextView) findViewById(R.id.textView1);
-
-        textView2 = (TextView) findViewById(R.id.textView2);
-
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Login1().execute();
-                textView1.setText(result1);
                 new Login2().execute();
-                textView2.setText(result2);
             }
         });
     }
@@ -145,13 +138,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public String getWifiName(Context context) {
+        String ssid = "none";
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState()) == NetworkInfo.DetailedState.CONNECTED) {
+            ssid = wifiInfo.getSSID();
+        }
+        return ssid;
+    }
+
     public class Login1 extends AsyncTask<String, Void, String> {
 
         final String username = user_data.getText().toString().trim();
         final String password = pass_data.getText().toString().trim();
+        String result;
 
         @Override
         protected String doInBackground(String... params) {
+
             try {
                 RequestBody body = new FormBody.Builder()
                         .add("username", username)
@@ -165,10 +170,10 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
                 Response response = client.newCall(request).execute();
-                result1 = response.body().string();
-                return result1;
+                result = response.body().string();
+                return result;
             } catch (Exception e) {
-                result1 = "ERR";
+                result = "ERR";
                 return null;
             }
 
@@ -181,9 +186,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class Login2 extends AsyncTask<String, Void, String> {
-
         final String username = user_data.getText().toString().trim();
         final String password = pass_data.getText().toString().trim();
+        String result;
 
         @Override
         protected String doInBackground(String... params) {
@@ -200,10 +205,10 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
                 Response response = client.newCall(request).execute();
-                result2 = response.body().string();
-                return result2;
+                result = response.body().string();
+                return result;
             } catch (Exception e) {
-                result2 = "ERR";
+                result = "ERR";
                 return null;
             }
         }
@@ -212,6 +217,5 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
         }
     }
-
 
 }
