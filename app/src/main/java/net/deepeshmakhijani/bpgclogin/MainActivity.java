@@ -1,5 +1,8 @@
 package net.deepeshmakhijani.bpgclogin;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.cert.CertificateException;
 
@@ -81,6 +85,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mwifi = connManager.getActiveNetworkInfo();
+        if (connManager.getActiveNetworkInfo() != null) {
+            network = mwifi.getTypeName();
+        }
+
+        if (network != null && !network.equals("WIFI")) {
+            Toast.makeText(this, "Connect to a wifi network", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Connect to a BPGC WiFi network", Toast.LENGTH_LONG).show();
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
