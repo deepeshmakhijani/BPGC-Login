@@ -171,6 +171,12 @@ public class MainActivity extends AppCompatActivity {
                 result1 = "ERR";
                 return null;
             }
+
+
+        }
+
+        protected void onPostExecute(String result) {
+            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -200,6 +206,10 @@ public class MainActivity extends AppCompatActivity {
                 result2 = "ERR";
                 return null;
             }
+        }
+
+        protected void onPostExecute(String result) {
+            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
         }
     }
 
