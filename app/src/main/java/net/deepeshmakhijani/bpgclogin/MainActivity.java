@@ -30,10 +30,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String URL1 = "https://20.20.2.11/login.html";
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
-    public static String result2;
+    public static String result1, result2;
+    public OkHttpClient client = getUnsafeOkHttpClient();
     Button login_btn;
     EditText user_data, pass_data;
-    TextView textView;
+    TextView textView1, textView2;
     String network = null;
 
     private static OkHttpClient getUnsafeOkHttpClient() {
@@ -91,14 +92,17 @@ public class MainActivity extends AppCompatActivity {
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
 
-        textView = (TextView) findViewById(R.id.textView);
+        textView1 = (TextView) findViewById(R.id.textView1);
+
+        textView2 = (TextView) findViewById(R.id.textView2);
 
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MyAsynctask().execute(
-                );
-                textView.setText(result2);
+                new Login1().execute();
+                textView1.setText(result1);
+                new Login2().execute();
+                textView2.setText(result2);
             }
         });
     }
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class MyAsynctask extends AsyncTask<String, Void, String> {
+    public class Login1 extends AsyncTask<String, Void, String> {
 
         final String username = user_data.getText().toString().trim();
         final String password = pass_data.getText().toString().trim();
@@ -133,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             try {
-
-
-                OkHttpClient client = getUnsafeOkHttpClient();
-
                 RequestBody body = new FormBody.Builder()
                         .add("username", username)
                         .add("password", password)
@@ -149,13 +149,40 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
                 Response response = client.newCall(request).execute();
+                result1 = response.body().string();
+                return result1;
+            } catch (Exception e) {
+                result1 = "ERR";
+                return null;
+            }
+        }
+    }
+
+    public class Login2 extends AsyncTask<String, Void, String> {
+
+        final String username = user_data.getText().toString().trim();
+        final String password = pass_data.getText().toString().trim();
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                RequestBody body = new FormBody.Builder()
+                        .add("username", username)
+                        .add("password", password)
+                        .add("mode", "191")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(URL2)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
                 result2 = response.body().string();
                 return result2;
-
-
             } catch (Exception e) {
                 result2 = "ERR";
-                return result2;
+                return null;
             }
         }
     }
