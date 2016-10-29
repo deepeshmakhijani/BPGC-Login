@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     public OkHttpClient client = getUnsafeOkHttpClient();
     Button login_btn;
     EditText user_data, pass_data;
-    String network = null;
 
     private static OkHttpClient getUnsafeOkHttpClient() {
         try {
@@ -82,20 +81,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static String getCurrentSsid(Context context) {
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            if (connectionInfo != null) {
+                ssid = connectionInfo.getSSID();
+            }
+        }
+        return ssid;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mwifi = connManager.getActiveNetworkInfo();
-        if (connManager.getActiveNetworkInfo() != null) {
-            network = mwifi.getTypeName();
-        }
-
-        if (network != null && !network.equals("WIFI")) {
-            Toast.makeText(this, "Connect to a wifi network", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Connect to a BPGC WiFi network", Toast.LENGTH_LONG).show();
-        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -110,8 +112,15 @@ public class MainActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Login1().execute();
-                new Login2().execute();
+                String wifi = getCurrentSsid(MainActivity.this);
+                if (wifi == null) {
+                    Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
+                } else if (wifi.equals("\"BPGC-HOSTEL\"")) {
+                    new Login1().execute();
+                } else {
+                    new Login2().execute();
+                }
+
             }
         });
     }
@@ -136,16 +145,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public String getWifiName(Context context) {
-        String ssid = "none";
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        if (WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState()) == NetworkInfo.DetailedState.CONNECTED) {
-            ssid = wifiInfo.getSSID();
-        }
-        return ssid;
     }
 
     public class Login1 extends AsyncTask<String, Void, String> {
@@ -176,12 +175,16 @@ public class MainActivity extends AppCompatActivity {
                 result = "ERR";
                 return null;
             }
-
-
         }
-
         protected void onPostExecute(String result) {
-            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
+            String[] parts = result.split("title");
+            if (parts[1].equals(">Web Authentication Failure</") || parts[1].equals(">Logged In</")) {
+                new Login2().execute();
+            } else if (parts[1].equals(">Web Authentication</")) {
+                Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -214,8 +217,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
+            String[] parts = result.split("message");
+            if (parts[1].equals("><![CDATA[You have successfully logged in]]></"))
+                Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
+            else if (parts[1].equals("><![CDATA[The system could not log you on. Make sure your username or password is correct]]></"))
+                Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+            else if (parts[1].equals("><![CDATA[Your data transfer has been exceeded, Please contact the administrator]]></"))
+                Toast.makeText(MainActivity.this, "Sorry your data is exceeded", Toast.LENGTH_SHORT).show();
+            else if (parts[1].equals("><![CDATA[???]]></"))
+                Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
         }
     }
-
 }
