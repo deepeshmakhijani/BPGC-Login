@@ -1,8 +1,6 @@
 package net.deepeshmakhijani.bpgclogin;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,50 +9,78 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.cert.CertificateException;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String URL1 = "https://20.20.2.11/login.html";
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
+    public static String result2;
     Button login_btn;
     EditText user_data, pass_data;
+    TextView textView;
     String network = null;
+
+    private static OkHttpClient getUnsafeOkHttpClient() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(sslSocketFactory);
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+
+            OkHttpClient okHttpClient = builder.build();
+            return okHttpClient;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        HttpsTrustManager.allowAllSSL();
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mwifi = connManager.getActiveNetworkInfo();
-        if (connManager.getActiveNetworkInfo() != null) {
-            network = mwifi.getTypeName();
-        }
-        HttpsTrustManager.allowAllSSL();
-        if (network != null && !network.equals("WIFI")) {
-            Toast.makeText(this, "Connect to a wifi network", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Connect to a BPGC WiFi network", Toast.LENGTH_LONG).show();
-        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -65,76 +91,16 @@ public class MainActivity extends AppCompatActivity {
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
 
+        textView = (TextView) findViewById(R.id.textView);
+
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login1();
+                new MyAsynctask().execute(
+                );
+                textView.setText(result2);
             }
         });
-    }
-
-    private void login1() {
-        final String username = user_data.getText().toString().trim();
-        final String password = pass_data.getText().toString().trim();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL1,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
-                params.put("buttonClicked", "4");
-                return params;
-            }
-
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
-
-    private void login2() {
-        final String username = user_data.getText().toString().trim();
-        final String password = pass_data.getText().toString().trim();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL2,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
-                params.put("mode", "191");
-                return params;
-            }
-
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
     }
 
     @Override
@@ -159,66 +125,40 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class HttpsTrustManager implements X509TrustManager {
+    public class MyAsynctask extends AsyncTask<String, Void, String> {
 
-        private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
-        private static TrustManager[] trustManagers;
+        final String username = user_data.getText().toString().trim();
+        final String password = pass_data.getText().toString().trim();
 
-        // high level certificate permissions
-        public static void allowAllSSL() {
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-
-                @Override
-                public boolean verify(String arg0, SSLSession arg1) {
-                    return true;
-                }
-
-            });
-
-            SSLContext context = null;
-            if (trustManagers == null) {
-                trustManagers = new TrustManager[]{new HttpsTrustManager()};
-            }
-
+        @Override
+        protected String doInBackground(String... params) {
             try {
-                context = SSLContext.getInstance("TLS");
-                context.init(null, trustManagers, new SecureRandom());
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
+
+
+                OkHttpClient client = getUnsafeOkHttpClient();
+
+                RequestBody body = new FormBody.Builder()
+                        .add("username", username)
+                        .add("password", password)
+                        .add("buttonClicked", "4")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(URL1)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                result2 = response.body().string();
+                return result2;
+
+
+            } catch (Exception e) {
+                result2 = "ERR";
+                return result2;
             }
-
-            HttpsURLConnection.setDefaultSSLSocketFactory(context
-                    .getSocketFactory());
         }
-
-        @Override
-        public void checkClientTrusted(
-                java.security.cert.X509Certificate[] x509Certificates, String s)
-                throws java.security.cert.CertificateException {
-
-        }
-
-        @Override
-        public void checkServerTrusted(
-                java.security.cert.X509Certificate[] x509Certificates, String s)
-                throws java.security.cert.CertificateException {
-
-        }
-
-        public boolean isClientTrusted(X509Certificate[] chain) {
-            return true;
-        }
-
-        public boolean isServerTrusted(X509Certificate[] chain) {
-            return true;
-        }
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return _AcceptedIssuers;
-        }
-
     }
+
+
 }
