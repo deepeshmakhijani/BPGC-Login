@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+     <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/username_textview"
+            android:gravity="center"
+            android:text="Username"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+           />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/username1"
+        android:layout_below="@+id/username_textview"
+        android:layout_alignLeft="@+id/username_textview"
+        android:layout_alignStart="@+id/username_textview"
+        android:textSize="15sp"
+        android:gravity="center"
+        />
+    </RelativeLayout>

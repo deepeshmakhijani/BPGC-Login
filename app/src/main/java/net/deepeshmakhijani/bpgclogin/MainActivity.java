@@ -1,6 +1,8 @@
 package net.deepeshmakhijani.bpgclogin;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
@@ -31,8 +33,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+import static java.security.AccessController.getContext;
 
+public class MainActivity extends AppCompatActivity {
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private static final String URL1 = "https://20.20.2.11/login.html";
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     public OkHttpClient client = getUnsafeOkHttpClient();
@@ -103,9 +108,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        // Setting the sharedPreferences
+        sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        editor = sharedPreferences.edit();
         login_btn = (Button) findViewById(R.id.login_btn);
-
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
 
@@ -120,9 +126,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     new Login2().execute();
                 }
-
+                final String username = user_data.getText().toString().trim();
+                final String password = pass_data.getText().toString().trim();
+                editor.putString(username,password);
+                editor.commit();
             }
         });
+
     }
 
     @Override
@@ -141,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(MainActivity.this,Settings.class);
+            startActivity(intent);
             return true;
         }
 
