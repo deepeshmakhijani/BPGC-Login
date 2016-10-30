@@ -88,9 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if (networkInfo.isConnected()) {
             final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            if (connectionInfo != null) {
-                ssid = connectionInfo.getSSID();
-            }
+            ssid = connectionInfo.getSSID();
         }
         return ssid;
     }
@@ -178,12 +176,17 @@ public class MainActivity extends AppCompatActivity {
         }
         protected void onPostExecute(String result) {
             String[] parts = result.split("title");
-            if (parts[1].equals(">Web Authentication Failure</") || parts[1].equals(">Logged In</")) {
-                new Login2().execute();
-            } else if (parts[1].equals(">Web Authentication</")) {
-                Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+            switch (parts[1]) {
+                case ">Web Authentication Failure</":
+                case ">Logged In</":
+                    new Login2().execute();
+                    break;
+                case ">Web Authentication</":
+                    Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }
@@ -218,14 +221,20 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(String result) {
             String[] parts = result.split("message");
-            if (parts[1].equals("><![CDATA[You have successfully logged in]]></"))
-                Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
-            else if (parts[1].equals("><![CDATA[The system could not log you on. Make sure your username or password is correct]]></"))
-                Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
-            else if (parts[1].equals("><![CDATA[Your data transfer has been exceeded, Please contact the administrator]]></"))
-                Toast.makeText(MainActivity.this, "Sorry your data is exceeded", Toast.LENGTH_SHORT).show();
-            else if (parts[1].equals("><![CDATA[???]]></"))
-                Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
+            switch (parts[1]) {
+                case "><![CDATA[You have successfully logged in]]></":
+                    Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
+                    break;
+                case "><![CDATA[The system could not log you on. Make sure your username or password is correct]]></":
+                    Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+                    break;
+                case "><![CDATA[Your data transfer has been exceeded, Please contact the administrator]]></":
+                    Toast.makeText(MainActivity.this, "Sorry your data is exceeded", Toast.LENGTH_SHORT).show();
+                    break;
+                case "><![CDATA[???]]></":
+                    Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
     }
 }
