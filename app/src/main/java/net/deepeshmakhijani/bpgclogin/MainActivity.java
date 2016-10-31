@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     public OkHttpClient client = getUnsafeOkHttpClient();
     Button login_btn;
-    CheckBox checkBox, check;
+    CheckBox checkBox;
+    //    CheckBox check;
     EditText user_data, pass_data;
     private SharedPreferences sharedPreferences, shared;
     private SharedPreferences.Editor editor, editor1;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
-        check = (CheckBox) findViewById(R.id.checkBox1);
+//        check = (CheckBox) findViewById(R.id.checkBox1);
         String user1, pass1;
         user1 = shared.getString("Default", null);
         user_data.setText(user1);
@@ -149,13 +149,24 @@ public class MainActivity extends AppCompatActivity {
                 pass_data.setText(pass);
             }
         });
-        if (check.isChecked()) {
-            pass_data.setInputType(InputType.TYPE_CLASS_TEXT |
-                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            final String password = pass_data.getText().toString().trim();
-            pass_data.setText(password);
+//        check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if(check.isChecked()){
+//                    pass_data.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+//                    pass_data.setSelection(pass_data.length());
+//                }
+//                else {
+//                    pass_data.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+//                    pass_data.setSelection(pass_data.length());
+//                }
+//
+//            }
+//        }
+//        );
 
-        }
+
 
     }
 
@@ -221,23 +232,26 @@ public class MainActivity extends AppCompatActivity {
                 result = response.body().string();
                 return result;
             } catch (Exception e) {
-                result = "ERR";
                 return null;
             }
         }
         protected void onPostExecute(String result) {
-            String[] parts = result.split("title");
-            switch (parts[1]) {
-                case ">Web Authentication Failure</":
-                case ">Logged In</":
-                    new Login2().execute();
-                    break;
-                case ">Web Authentication</":
-                    Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
-                    break;
+            if (result != null) {
+                String[] parts = result.split("title");
+                switch (parts[1]) {
+                    case ">Web Authentication Failure</":
+                    case ">Logged In</":
+                        new Login2().execute();
+                        break;
+                    case ">Web Authentication</":
+                        Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -271,20 +285,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            String[] parts = result.split("message");
-            switch (parts[1]) {
-                case "><![CDATA[You have successfully logged in]]></":
-                    Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
-                    break;
-                case "><![CDATA[The system could not log you on. Make sure your username or password is correct]]></":
-                    Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
-                    break;
-                case "><![CDATA[Your data transfer has been exceeded, Please contact the administrator]]></":
-                    Toast.makeText(MainActivity.this, "Sorry your data is exceeded", Toast.LENGTH_SHORT).show();
-                    break;
-                case "><![CDATA[???]]></":
-                    Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
-                    break;
+            if (result != null) {
+                String[] parts = result.split("message");
+                switch (parts[1]) {
+                    case "><![CDATA[You have successfully logged in]]></":
+                        Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "><![CDATA[The system could not log you on. Make sure your username or password is correct]]></":
+                        Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "><![CDATA[Your data transfer has been exceeded, Please contact the administrator]]></":
+                        Toast.makeText(MainActivity.this, "Sorry your data is exceeded", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "><![CDATA[???]]></":
+                        Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
             }
         }
     }
