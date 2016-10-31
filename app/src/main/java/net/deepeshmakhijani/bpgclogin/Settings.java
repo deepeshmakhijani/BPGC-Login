@@ -1,5 +1,6 @@
 package net.deepeshmakhijani.bpgclogin;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +13,16 @@ import java.util.Map;
 import java.util.Vector;
 
 public class Settings extends AppCompatActivity {
+    public static Context contextOfApplication;
     SettingsRV adapter;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     RecyclerView recyclerView;
     private Vector<SettingsItemFormat> settingsItemFormats = new Vector<>();
+
+    public static Context getContextOfApplication() {
+        return contextOfApplication;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +40,14 @@ public class Settings extends AppCompatActivity {
             });
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        contextOfApplication = getApplicationContext();
+
 
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         //  recyclerView.setItemAnimator(new DefaultItemAnimator());
-       settingsItemFormats =data();
+        settingsItemFormats = data();
         adapter = new SettingsRV(this,settingsItemFormats);
         recyclerView.setAdapter(adapter);
     }
@@ -56,7 +64,6 @@ Vector<SettingsItemFormat> settingsItemFormats1 = new Vector<>();
 
     return settingsItemFormats1;
 }
-
 
 }
 

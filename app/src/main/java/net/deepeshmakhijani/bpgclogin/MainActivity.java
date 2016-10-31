@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     Button login_btn;
     CheckBox checkBox, check;
     EditText user_data, pass_data;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences sharedPreferences, shared;
+    private SharedPreferences.Editor editor, editor1;
 
     private static OkHttpClient getUnsafeOkHttpClient() {
         try {
@@ -110,12 +110,18 @@ public class MainActivity extends AppCompatActivity {
         // Setting the sharedPreferencess
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
-
+        shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
+        editor1 = sharedPreferences.edit();
         login_btn = (Button) findViewById(R.id.login_btn);
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
         check = (CheckBox) findViewById(R.id.checkBox1);
+        String user1, pass1;
+        user1 = shared.getString("Default", null);
+        user_data.setText(user1);
+        pass1 = sharedPreferences.getString(user1, null);
+        pass_data.setText(pass1);
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

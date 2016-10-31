@@ -1,6 +1,7 @@
 package net.deepeshmakhijani.bpgclogin;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +18,16 @@ import java.util.Vector;
 
 public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
 
-    Context context;
-    Vector <SettingsItemFormat> settingsItemFormat;
+    Context applicationContext = Settings.getContextOfApplication();
+    SharedPreferences shared = applicationContext.getSharedPreferences("MyPref1", 0);
+    SharedPreferences.Editor editor = shared.edit();
+    private Context context;
+    private Vector<SettingsItemFormat> settingsItemFormat;
     private int lastCheckedPosition = -1;
     public SettingsRV(Context context, Vector<SettingsItemFormat> settingsItemFormat) {
         this.context = context;
         this.settingsItemFormat = settingsItemFormat;
     }
-
-
 
     @Override
     public SettingsRV.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -47,7 +49,12 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
             star += "*";
         }
         holder.pass_word.setText(star);
-        holder.radiobutton.setChecked(position == lastCheckedPosition);
+        int pos = shared.getInt("DefaultPos", 0);
+        if (position == pos) {
+            holder.radiobutton.setChecked(true);
+        } else {
+            holder.radiobutton.setChecked(position == lastCheckedPosition);
+        }
 
     }
 
@@ -77,6 +84,12 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
                 public void onClick(View v) {
                     lastCheckedPosition = getAdapterPosition();
                     notifyItemRangeChanged(0, settingsItemFormat.size());
+                    final String username = user_name.getText().toString().trim();
+                    editor.putString("Default", username);
+                    editor.putInt("DefaultPos", getAdapterPosition());
+                    editor.commit();
+
+
                 }
             });
 
@@ -84,6 +97,5 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
     }
 
 }
-
 
 
