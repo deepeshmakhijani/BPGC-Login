@@ -88,8 +88,6 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
                     editor.putString("Default", username);
                     editor.putInt("DefaultPos", getAdapterPosition());
                     editor.commit();
-
-
                 }
             });
 

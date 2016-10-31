@@ -154,10 +154,24 @@ public class MainActivity extends AppCompatActivity {
                     InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             final String password = pass_data.getText().toString().trim();
             pass_data.setText(password);
+
         }
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
+        sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
+        user_data = (EditText) findViewById(R.id.user_data);
+        pass_data = (EditText) findViewById(R.id.pass_data);
+        String user1, pass1;
+        user1 = shared.getString("Default", null);
+        user_data.setText(user1);
+        pass1 = sharedPreferences.getString(user1, null);
+        pass_data.setText(pass1);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
