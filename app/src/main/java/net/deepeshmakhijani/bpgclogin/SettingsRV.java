@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -21,6 +22,8 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
     Context applicationContext = Settings.getContextOfApplication();
     SharedPreferences shared = applicationContext.getSharedPreferences("MyPref1", 0);
     SharedPreferences.Editor editor = shared.edit();
+    SharedPreferences shared1 = applicationContext.getSharedPreferences("MyPref", 0);
+    SharedPreferences.Editor editor1 = shared.edit();
     private Context context;
     private Vector<SettingsItemFormat> settingsItemFormat;
     private int lastCheckedPosition = -1;
@@ -49,7 +52,7 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
             star += "*";
         }
         holder.pass_word.setText(star);
-        int pos = shared.getInt("DefaultPos", 0);
+        int pos = shared.getInt("DefaultPos", -5);
         if (position == pos) {
             holder.radiobutton.setChecked(true);
         } else {
@@ -68,7 +71,7 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
         TextView user_name, pass_word, colon, colon1;
         CheckBox checkBox;
         RadioButton radiobutton;
-
+        ImageButton delete;
         public ViewHolder(View itemView) {
             super(itemView);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
@@ -78,6 +81,7 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
             pass_word = (TextView) itemView.findViewById(R.id.password1);
             colon = (TextView) itemView.findViewById(R.id.colon1);
             colon1 = (TextView) itemView.findViewById(R.id.colon2);
+            delete = (ImageButton) itemView.findViewById(R.id.deletebutton);
             radiobutton = (RadioButton) itemView.findViewById(R.id.radioButton2);
             radiobutton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -90,7 +94,14 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
                     editor.commit();
                 }
             });
-
+//          delete.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View view) {
+//          final String username = user_name.getText().toString().trim();
+//          final String password = pass_word.getText().toString().trim();
+//          editor1.remove(username);
+//          }
+//        });
         }
     }
 
