@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,16 +34,15 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static java.security.AccessController.getContext;
-
 public class MainActivity extends AppCompatActivity {
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private static final String URL1 = "https://20.20.2.11/login.html";
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     public OkHttpClient client = getUnsafeOkHttpClient();
     Button login_btn;
+    CheckBox checkBox;
     EditText user_data, pass_data;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     private static OkHttpClient getUnsafeOkHttpClient() {
         try {
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         login_btn = (Button) findViewById(R.id.login_btn);
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
-
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,10 +124,12 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     new Login2().execute();
                 }
-                final String username = user_data.getText().toString().trim();
+                if (checkBox.isChecked()) {
+                    final String username = user_data.getText().toString().trim();
                 final String password = pass_data.getText().toString().trim();
                 editor.putString(username,password);
-                editor.commit();
+                    editor.commit();
+                }
             }
         });
 
