@@ -2,10 +2,7 @@ package net.deepeshmakhijani.bpgclogin;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,10 +13,11 @@ import java.util.Vector;
 
 public class Settings extends AppCompatActivity {
     SettingsRV adapter;
-    private Vector<SettingsItemFormat> settingsItemFormats = new Vector<>();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     RecyclerView recyclerView;
+    private Vector<SettingsItemFormat> settingsItemFormats = new Vector<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +54,7 @@ Vector<SettingsItemFormat> settingsItemFormats1 = new Vector<>();
         settingsItemFormats1.add(settingsItemFormat);
     }
 
-return settingsItemFormats1;
+    return settingsItemFormats1;
 }
 
 

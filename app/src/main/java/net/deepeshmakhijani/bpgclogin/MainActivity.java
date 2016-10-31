@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     public OkHttpClient client = getUnsafeOkHttpClient();
     Button login_btn;
-    CheckBox checkBox;
+    CheckBox checkBox, check;
     EditText user_data, pass_data;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -109,10 +110,12 @@ public class MainActivity extends AppCompatActivity {
         // Setting the sharedPreferencess
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
+
         login_btn = (Button) findViewById(R.id.login_btn);
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
+        check = (CheckBox) findViewById(R.id.checkBox1);
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,9 +127,28 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     new Login2().execute();
                 }
-
+                if (checkBox.isChecked()) {
+                    final String username = user_data.getText().toString().trim();
+                    final String password = pass_data.getText().toString().trim();
+                    editor.putString(username, password);
+                    editor.commit();
+                }
             }
         });
+        pass_data.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                final String username = user_data.getText().toString().trim();
+                String pass = sharedPreferences.getString(username, null);
+                pass_data.setText(pass);
+            }
+        });
+        if (check.isChecked()) {
+            pass_data.setInputType(InputType.TYPE_CLASS_TEXT |
+                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            final String password = pass_data.getText().toString().trim();
+            pass_data.setText(password);
+        }
 
     }
 
@@ -233,12 +255,6 @@ public class MainActivity extends AppCompatActivity {
             switch (parts[1]) {
                 case "><![CDATA[You have successfully logged in]]></":
                     Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
-                    if (checkBox.isChecked()) {
-                        final String username = user_data.getText().toString().trim();
-                        final String password = pass_data.getText().toString().trim();
-                        editor.putString(username, password);
-                        editor.commit();
-                    }
                     break;
                 case "><![CDATA[The system could not log you on. Make sure your username or password is correct]]></":
                     Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
