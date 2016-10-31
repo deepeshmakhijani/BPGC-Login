@@ -124,12 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     new Login2().execute();
                 }
-                if (checkBox.isChecked()) {
-                    final String username = user_data.getText().toString().trim();
-                final String password = pass_data.getText().toString().trim();
-                editor.putString(username,password);
-                    editor.commit();
-                }
+
             }
         });
 
@@ -238,6 +233,12 @@ public class MainActivity extends AppCompatActivity {
             switch (parts[1]) {
                 case "><![CDATA[You have successfully logged in]]></":
                     Toast.makeText(MainActivity.this, "You have successfully Logged In", Toast.LENGTH_SHORT).show();
+                    if (checkBox.isChecked()) {
+                        final String username = user_data.getText().toString().trim();
+                        final String password = pass_data.getText().toString().trim();
+                        editor.putString(username, password);
+                        editor.commit();
+                    }
                     break;
                 case "><![CDATA[The system could not log you on. Make sure your username or password is correct]]></":
                     Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
