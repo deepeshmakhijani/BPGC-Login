@@ -4,5 +4,6 @@
     <string name="title_activity_settings">Settings</string>
     <string name="appwidget_text">LOGIN</string>
     <string name="configure">Configure</string>
+    <string name="Default">Check the save username box to save your login credentials.</string>
     <string name="add_widget">Add widget</string>
 </resources>

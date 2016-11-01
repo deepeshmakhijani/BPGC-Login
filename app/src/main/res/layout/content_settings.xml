@@ -16,4 +16,13 @@
         android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
 
+    <TextView
+        android:id="@+id/textdefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="@string/Default"
+        android:textSize="15dp"
+        android:visibility="visible" />
 </RelativeLayout>

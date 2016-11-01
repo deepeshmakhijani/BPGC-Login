@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
-//        check = (CheckBox) findViewById(R.id.checkBox1);
+        // check = (CheckBox) findViewById(R.id.checkBox1);
         String user1, pass1;
         user1 = shared.getString("Default", null);
         user_data.setText(user1);
@@ -162,24 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 pass_data.setText(pass);
             }
         });
-//        check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if(check.isChecked()){
-//                    pass_data.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-//                    pass_data.setSelection(pass_data.length());
-//                }
-//                else {
-//                    pass_data.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//                    pass_data.setSelection(pass_data.length());
-//                }
-//
-//            }
-//        }
-//        );
-
-
 
     }
 
