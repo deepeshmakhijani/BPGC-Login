@@ -168,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
         pass_data = (EditText) findViewById(R.id.pass_data);
         String user1, pass1;
         user1 = shared.getString("Default", null);
-        user_data.setText(user1);
         pass1 = sharedPreferences.getString(user1, null);
+        user_data.setText(user1);
         pass_data.setText(pass1);
     }
     @Override

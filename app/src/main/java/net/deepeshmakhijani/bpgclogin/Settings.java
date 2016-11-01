@@ -50,6 +50,7 @@ public class Settings extends AppCompatActivity {
         settingsItemFormats = data();
         adapter = new SettingsRV(this,settingsItemFormats);
         recyclerView.setAdapter(adapter);
+
     }
 
 public Vector<SettingsItemFormat> data(){
