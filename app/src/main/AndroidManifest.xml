@@ -32,11 +32,11 @@
 
         <activity
             android:name=".Settings"
-            android:label="@string/title_activity_settings"
+            android:label="Delete Credentials"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".SettingsMain" />
         </activity>
 
         <receiver android:name=".LoginWidget">
@@ -53,6 +53,14 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".SettingsMain"
+            android:label="Settings"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 

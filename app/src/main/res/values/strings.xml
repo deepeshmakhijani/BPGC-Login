@@ -6,4 +6,5 @@
     <string name="configure">Configure</string>
     <string name="Default">Check the save username box to save your login credentials.</string>
     <string name="add_widget">Add widget</string>
+    <string name="title_activity_settings_main">SettingsMain</string>
 </resources>
