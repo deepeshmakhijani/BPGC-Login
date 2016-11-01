@@ -23,7 +23,7 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
     SharedPreferences shared = applicationContext.getSharedPreferences("MyPref1", 0);
     SharedPreferences.Editor editor = shared.edit();
     SharedPreferences shared1 = applicationContext.getSharedPreferences("MyPref", 0);
-    SharedPreferences.Editor editor1 = shared.edit();
+    SharedPreferences.Editor editor1 = shared1.edit();
     private Context context;
     private Vector<SettingsItemFormat> settingsItemFormat;
     private int lastCheckedPosition = -1;
@@ -94,14 +94,25 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
                     editor.commit();
                 }
             });
-//          delete.setOnClickListener(new View.OnClickListener() {
-//          @Override
-//          public void onClick(View view) {
-//          final String username = user_name.getText().toString().trim();
-//          final String password = pass_word.getText().toString().trim();
-//          editor1.remove(username);
-//          }
-//        });
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String username = user_name.getText().toString().trim();
+                    String check;
+                    check = shared.getString("Default", null);
+                    if (username.equals(check)) {
+                        editor.remove("Default");
+                        editor.commit();
+                    }
+                    editor1.remove(username);
+                    editor1.commit();
+                    settingsItemFormat.remove(getAdapterPosition());
+                    // Log.e("TAG",getItemCount()+"");
+                    notifyItemRemoved(getAdapterPosition());
+                    //Log.e("TAG",getAdapterPosition()+" pos");
+
+                }
+            });
         }
     }
 
