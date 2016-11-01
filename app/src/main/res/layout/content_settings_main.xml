@@ -106,10 +106,21 @@
         android:id="@+id/d2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/d3"
+        android:layout_centerHorizontal="true"
+
+        android:text="Deepesh Makhijani : 9403813210"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/d3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="6dp"
-        android:text="Deepesh Makhijani : 9403813210"
+        android:text="Abhineet Nigam : "
         android:textColor="@android:color/black" />
+
 
 </RelativeLayout>
