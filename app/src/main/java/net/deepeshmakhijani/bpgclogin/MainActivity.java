@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String URL1 = "https://20.20.2.11/login.html";
     private static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     public OkHttpClient client = getUnsafeOkHttpClient();
-    Button login_btn;
+    Button login_btn, logout_btn;
     CheckBox checkBox;
     //    CheckBox check;
     EditText user_data, pass_data;
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
         editor1 = sharedPreferences.edit();
         login_btn = (Button) findViewById(R.id.login_btn);
+        logout_btn = (Button) findViewById(R.id.logout_btn);
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
@@ -138,6 +139,18 @@ public class MainActivity extends AppCompatActivity {
                     final String password = pass_data.getText().toString().trim();
                     editor.putString(username, password);
                     editor.commit();
+                }
+            }
+        });
+
+        logout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String wifi = getCurrentSsid(MainActivity.this);
+                if (wifi == null) {
+                    Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
+                } else {
+                    new Logout().execute();
                 }
             }
         });
@@ -300,6 +313,60 @@ public class MainActivity extends AppCompatActivity {
                     case "><![CDATA[???]]></":
                         Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
                         break;
+                    default:
+                        Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public class Logout extends AsyncTask<String, Void, String> {
+        final String username = user_data.getText().toString().trim();
+        final String password = pass_data.getText().toString().trim();
+        String result;
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                RequestBody body = new FormBody.Builder()
+                        .add("username", username)
+                        .add("password", password)
+                        .add("mode", "193")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(URL2)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                result = response.body().string();
+                return result;
+            } catch (Exception e) {
+                result = "ERR";
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                String[] parts = result.split("message");
+                switch (parts[1]) {
+                    case "><![CDATA[You have successfully logged off]]></":
+                        Toast.makeText(MainActivity.this, "You have successfully Logged Off", Toast.LENGTH_SHORT).show();
+                        break;
+//                    case "><![CDATA[The system could not log you on. Make sure your username or password is correct]]></":
+//                        Toast.makeText(MainActivity.this, "Please check your credentials", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case "><![CDATA[Your data transfer has been exceeded, Please contact the administrator]]></":
+//                        Toast.makeText(MainActivity.this, "Sorry your data is exceeded", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case "><![CDATA[???]]></":
+//                        Toast.makeText(MainActivity.this, "Maximum Login Limit Reached", Toast.LENGTH_SHORT).show();
+//                        break;
                     default:
                         Toast.makeText(MainActivity.this, "Wait for the issue to be solved", Toast.LENGTH_SHORT).show();
                         break;
