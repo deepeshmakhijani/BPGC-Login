@@ -7,7 +7,6 @@
 
     <item
         android:id="@+id/deleteAll"
-        android:logo="@drawable/delete_menu"
         android:title="DELETE ALL"
         app:showAsAction="always" />
 

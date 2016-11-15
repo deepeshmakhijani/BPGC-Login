@@ -52,6 +52,10 @@ public class Login1 extends AsyncTask<String, Void, String> {
     }
 
     protected void onPostExecute(String result) {
+        if (result == null) {
+            new Login2(this.context).execute();
+            return;
+        }
         String pattern = Pattern.quote("<title>") + "(.*?)" + Pattern.quote("</title>");
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(result);
