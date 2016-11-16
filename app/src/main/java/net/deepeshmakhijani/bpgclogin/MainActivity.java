@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
     static EditText user_data, pass_data;
     Button login_btn, logout_btn;
-    CheckBox checkBox;
+    CheckBox rc, sd;
     private SharedPreferences sharedPreferences, shared;
     private SharedPreferences.Editor editor, editor1;
 
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Setting the sharedPreferencess
+        // Setting the sharedPreferences
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
         shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
@@ -59,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
         logout_btn = (Button) findViewById(R.id.logout_btn);
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
-        checkBox = (CheckBox) findViewById(R.id.checkBox);
-        // check = (CheckBox) findViewById(R.id.checkBox1);
+        rc = (CheckBox) findViewById(R.id.rc);
+        sd = (CheckBox) findViewById(R.id.sd);
+        rc.setChecked(true);
         String user1, pass1;
         user1 = shared.getString("Default", null);
         user_data.clearFocus();
@@ -73,16 +75,31 @@ public class MainActivity extends AppCompatActivity {
                 String wifi = getCurrentSsid(MainActivity.this);
                 if (wifi == null) {
                     Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
-                } else if (wifi.equals("\"BPGC-HOSTEL\"")) {
-                    new Login1(MainActivity.this).execute();
+//                } else if (wifi.equals("\"BPGC-HOSTEL\"")) {
+//                    new Login1(MainActivity.this).execute();
+//                } else {
+//                    new Login2(MainActivity.this).execute();
+//                }
                 } else {
                     new Login2(MainActivity.this).execute();
                 }
-                if (checkBox.isChecked()) {
+                if (rc.isChecked()) {
                     final String username = user_data.getText().toString().trim();
                     final String password = pass_data.getText().toString().trim();
                     editor.putString(username, password);
                     editor.commit();
+                }
+            }
+        });
+
+        rc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    sd.setChecked(false);
+                    sd.setEnabled(false);
+                } else {
+                    sd.setEnabled(true);
                 }
             }
         });

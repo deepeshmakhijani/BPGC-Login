@@ -61,6 +61,8 @@ public class Login2 extends AsyncTask<String, Void, String> {
             } else {
                 Toast.makeText(this.context, "Kindly Reconnect the WiFi", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            new Login1(this.context).execute();
         }
     }
 }

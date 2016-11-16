@@ -54,7 +54,7 @@ public class Logout extends AsyncTask<String, Void, String> {
 
     protected void onPostExecute(String result) {
         if (result != null) {
-            String pattern = Pattern.quote("<title>") + "(.*?)" + Pattern.quote("</title>");
+            String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(result);
             if (m.find()) {

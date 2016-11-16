@@ -18,8 +18,8 @@
         android:id="@+id/user_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="128dp">
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="124dp">
 
         <EditText
             android:id="@+id/user_data"
@@ -34,8 +34,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/user_text"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
         app:passwordToggleEnabled="false">
 
         <EditText
@@ -48,29 +48,30 @@
 
     <Button
         android:id="@+id/login_btn"
-        android:layout_width="120dp"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/checkBox"
+        android:layout_below="@+id/sd"
         android:layout_centerInParent="true"
         android:layout_marginTop="18dp"
-        android:background="@drawable/circle_button"
+        android:background="@drawable/ripple"
         android:elevation="4dp"
         android:text="Login"
         android:textSize="18sp" />
 
     <Button
         android:id="@+id/logout_btn"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login_btn"
         android:layout_centerInParent="true"
         android:layout_marginTop="5dp"
-        android:background="@drawable/logout_btn"
         android:elevation="4dp"
-        android:text="Logout" />
+        android:text="Logout"
+        android:textColor="@drawable/logout_btn" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/rc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -78,5 +79,16 @@
         android:layout_below="@+id/pass_text"
         android:layout_marginTop="5dp"
         android:text="Remember Credentials"
-        android:textSize="16sp" />
+        android:textSize="14sp" />
+
+    <CheckBox
+        android:id="@+id/sd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rc"
+        android:layout_marginTop="5dp"
+        android:text="Set Default"
+        android:textSize="14sp" />
 </RelativeLayout>

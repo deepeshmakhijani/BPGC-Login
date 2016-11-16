@@ -74,7 +74,7 @@ public class SettingsRV extends RecyclerView.Adapter<SettingsRV.ViewHolder> {
         ImageButton delete;
         public ViewHolder(View itemView) {
             super(itemView);
-            checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
+            checkBox = (CheckBox) itemView.findViewById(R.id.rc);
             username = (TextView) itemView.findViewById(R.id.username_textview);
             user_name = (TextView) itemView.findViewById(R.id.username1);
             password = (TextView) itemView.findViewById(R.id.password_textview);
