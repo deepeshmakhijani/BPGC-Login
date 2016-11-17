@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#c29e7f"
+    android:background="#9f7a51"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="net.deepeshmakhijani.bpgclogin.SettingsMain"
@@ -27,7 +27,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#c5a488"
+            android:background="#a88062"
             android:padding="16dp">
 
             <ImageView
@@ -67,7 +67,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#c5a488"
+            android:background="#a88062"
             android:padding="16dp">
 
             <ImageView
