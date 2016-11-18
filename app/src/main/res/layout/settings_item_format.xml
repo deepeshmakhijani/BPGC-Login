@@ -16,8 +16,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#a88062"
-        android:padding="16dp">
+        android:background="@color/lt_brown"
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/username_textview"

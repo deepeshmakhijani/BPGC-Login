@@ -14,6 +14,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card1"
         android:layout_width="match_parent"
+        android:layout_below="@+id/card3"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="1dp"
@@ -27,7 +28,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#a88062"
+            android:background="@color/lt_brown"
             android:padding="16dp">
 
             <ImageView
@@ -67,7 +68,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#a88062"
+            android:background="@color/lt_brown"
             android:padding="16dp">
 
             <ImageView
@@ -86,6 +87,47 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="Change Password"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="1dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:padding="2dp"
+        app:cardCornerRadius="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/lt_brown"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/updt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_update_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/updt"
+                android:layout_toRightOf="@+id/updt"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Set Default Credentials"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </RelativeLayout>
