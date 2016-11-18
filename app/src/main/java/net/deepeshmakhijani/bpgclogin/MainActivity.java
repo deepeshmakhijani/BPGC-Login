@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,15 +21,26 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
-    public static final String URL1 = "https://20.20.2.11/login.html";
+    //    public static final String URL1 = "https://20.20.2.11/login.html";
     public static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
-    static EditText user_data, pass_data;
+    EditText user_data, pass_data;
     Button login_btn, logout_btn;
     CheckBox rc, sd;
     private SharedPreferences sharedPreferences, shared;
-    private SharedPreferences.Editor editor, editor1;
+    private SharedPreferences.Editor editor;
 
+
+    //    Get current ssid
     public static String getCurrentSsid(Context context) {
         String ssid = null;
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -55,37 +67,43 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
         shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
-        editor1 = sharedPreferences.edit();
         login_btn = (Button) findViewById(R.id.login_btn);
         logout_btn = (Button) findViewById(R.id.logout_btn);
         user_data = (EditText) findViewById(R.id.user_data);
         pass_data = (EditText) findViewById(R.id.pass_data);
         rc = (CheckBox) findViewById(R.id.rc);
         sd = (CheckBox) findViewById(R.id.sd);
+
         rc.setChecked(true);
+
+//        Set default username/password in edit text
         String user1, pass1;
         user1 = shared.getString("Default", null);
         user_data.clearFocus();
         user_data.setText(user1);
         pass1 = sharedPreferences.getString(user1, null);
         pass_data.setText(pass1);
+
+
+//        LOGIN BUTTON
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String username = user_data.getText().toString().trim();
+                String password = pass_data.getText().toString().trim();
+
                 String wifi = getCurrentSsid(MainActivity.this);
+
                 if (wifi == null) {
                     Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
-//                } else if (wifi.equals("\"BPGC-HOSTEL\"")) {
-//                    new Login1(MainActivity.this).execute();
-//                } else {
-//                    new Login2(MainActivity.this).execute();
-//                }
+                } else if (wifi.equals("\"BPGC-HOSTEL\"") || wifi.equals("\"BPGC-WIFI\"")) {
+                    new Login2().execute(username, password);
                 } else {
-                    new Login2(MainActivity.this).execute();
+                    new Login2().execute(username, password);
                 }
+
+//                Remember Credentials
                 if (rc.isChecked()) {
-                    final String username = user_data.getText().toString().trim();
-                    final String password = pass_data.getText().toString().trim();
                     editor.putString(username, password);
                     editor.commit();
                 }
@@ -104,14 +122,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        LOGOUT BUTTON
         logout_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String username = user_data.getText().toString().trim();
+                String password = pass_data.getText().toString().trim();
                 String wifi = getCurrentSsid(MainActivity.this);
                 if (wifi == null) {
                     Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
                 } else {
-                    new Logout(MainActivity.this).execute();
+                    new Logout().execute(username, password);
                 }
             }
         });
@@ -123,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 pass_data.setText(pass);
             }
         });
-
     }
 
     @Override
@@ -163,6 +183,163 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    //    Login to https://10.1.0.10:8090/httpclient.html
+    private class Login2 extends AsyncTask<String, Void, String> {
+        //    Get okhttp client
+        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+        private String result;
+        private String message;
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+//                Generate request body
+                RequestBody body = new FormBody.Builder()
+                        .add("username", params[0])
+                        .add("password", params[1])
+                        .add("mode", "191")
+                        .build();
+//                Make request object
+                Request request = new Request.Builder()
+                        .url(URL2)
+                        .post(body)
+                        .build();
+//                Get response
+                Response response = client.newCall(request).execute();
+                result = response.body().string();
+                return result;
+            } catch (Exception e) {
+                result = "ERR";
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != null) {
+//                Get message using regex
+                String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(result);
+                if (m.find()) {
+                    message = m.group(1);
+                } else {
+                    message = "Kindly Reconnect the WiFi";
+                }
+            } else {
+                message = "Kindly Reconnect the WiFi";
+            }
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //    Logout from https://10.1.0.10:8090/httpclient.html
+    private class Logout extends AsyncTask<String, Void, String> {
+        private String message;
+        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+        private String result;
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                RequestBody body = new FormBody.Builder()
+                        .add("username", params[0])
+                        .add("password", params[1])
+                        .add("mode", "193")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(URL2)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                result = response.body().string();
+                return result;
+            } catch (Exception e) {
+                result = "ERR";
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(result);
+                if (m.find()) {
+                    message = m.group(1);
+                } else {
+                    message = "Kindly Reconnect the WiFi";
+                }
+            } else {
+                message = "Kindly Reconnect the WiFi";
+            }
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    /*
+//    Login to https://20.20.2.11/login.html followed by https://10.1.0.10:8090/httpclient.html
+    private class Login1 extends AsyncTask<String, Void, String> {
+        private String message;
+        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+        private String result;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                RequestBody body = new FormBody.Builder()
+                        .add("username", params[0])
+                        .add("password", params[1])
+                        .add("buttonClicked", "4")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(URL1)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                result = response.body().string();
+                return result;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                String pattern = Pattern.quote("<title>") + "(.*?)" + Pattern.quote("</title>");
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(result);
+                if (m.find()) {
+                    switch (m.group(1)) {
+                        case "Web Authentication Failure":
+                        case "Logged In":
+                            new Login2().execute();
+                            break;
+                        case "Web Authentication":
+                            message = "Please check your credentials";
+                            break;
+                        default:
+                            message = "Kindly Reconnect the WiFi";
+                            break;
+                    }
+                } else {
+                    message = "Kindly Reconnect the WiFi";
+                }
+            }
+            else {
+                message = "Kindly Reconnect the WiFi";
+            }
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+    */
 }
 
 

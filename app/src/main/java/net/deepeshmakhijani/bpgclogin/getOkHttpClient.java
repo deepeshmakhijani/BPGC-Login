@@ -15,6 +15,8 @@ import okhttp3.OkHttpClient;
  * Created by deepesh on 11/7/16.
  */
 
+//Get okhhtp client
+
 public class getOkHttpClient {
     static OkHttpClient getOkHttpClient() {
         try {
