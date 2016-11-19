@@ -12,6 +12,7 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.NotificationCompat;
+import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,14 +57,16 @@ public class WifiReceiver extends BroadcastReceiver {
                 String ssid = wifiInfo.getSSID();
 
                 if (((ssid.equals("\"BPGC-HOSTEL\"") || ssid.equals("\"BPGC-WIFI\"")) && (user1 != null) && (pass1 != null))) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            new Login2(c).execute(user1, pass1);
-                        }
-                    }, 1000);
+                    Toast.makeText(context, ssid, Toast.LENGTH_SHORT).show();
                 }
+//                    final Handler handler = new Handler();
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            new Login2(c).execute(user1, pass1);
+//                        }
+//                    }, 5000);
+//                }
             }
         }
 

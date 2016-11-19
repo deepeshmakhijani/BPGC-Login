@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         super.onCreate(savedInstanceState);
@@ -144,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
                 pass_data.setText(pass);
             }
         });
+        Intent i =new Intent(this,MyService.class);
+        startService(i);
     }
 
     @Override
