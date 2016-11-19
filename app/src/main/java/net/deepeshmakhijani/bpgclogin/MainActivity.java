@@ -53,10 +53,21 @@ public class MainActivity extends AppCompatActivity {
         return ssid;
     }
 
+    public void startService() {
+        startService(new Intent(getBaseContext(), MyService.class));
+
+    }
+
+    // Method to stop the service
+    public void stopService() {
+        stopService(new Intent(getBaseContext(), MyService.class));
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        startService();
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -145,8 +156,6 @@ public class MainActivity extends AppCompatActivity {
                 pass_data.setText(pass);
             }
         });
-        Intent i =new Intent(this,MyService.class);
-        startService(i);
     }
 
     @Override
