@@ -28,7 +28,6 @@ import okhttp3.Response;
 
 //Broadcast receiver to detect changes in wifi
 public class WifiReceiver extends BroadcastReceiver {
-    public String message;
     private SharedPreferences sharedPreferences, shared;
 
     @Override
@@ -63,7 +62,7 @@ public class WifiReceiver extends BroadcastReceiver {
                         public void run() {
                             new Login2(c).execute(user1, pass1);
                         }
-                    }, 100);
+                    }, 1000);
                 }
             }
         }
@@ -75,7 +74,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
     class Login2 extends AsyncTask<String, Void, String> {
         private OkHttpClient client = getOkHttpClient.getOkHttpClient();
-        private String result;
+        private String result, message;
 
         private Context c;
 
@@ -107,35 +106,24 @@ public class WifiReceiver extends BroadcastReceiver {
         }
 
         protected void onPostExecute(String result) {
+//            Notification
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
+            mBuilder.setSmallIcon(R.drawable.logo_bits);
+            mBuilder.setContentTitle("MOTHERFUCKAS");
+
             if (result != null) {
                 String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
                 Pattern r = Pattern.compile(pattern);
                 Matcher m = r.matcher(result);
                 if (m.find()) {
                     message = m.group(1);
-                } else {
-                    message = "Kindly Reconnect the WiFi";
+                    mBuilder.setContentText(message);
+                    NotificationManager mNotificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    int notificationID = 001;
+                    mNotificationManager.notify(notificationID, mBuilder.build());
                 }
-            } else {
-                message = "Kindly Reconnect the WiFi";
             }
-
-
-            //                    Send notification
-
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
-            mBuilder.setSmallIcon(R.drawable.logo_bits);
-            mBuilder.setContentTitle(message);
-            mBuilder.setContentText("Enjoy Bro |m|");
-            NotificationManager mNotificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            int notificationID = 001;
-            mNotificationManager.notify(notificationID, mBuilder.build());
-
-
         }
     }
-
-
 }
