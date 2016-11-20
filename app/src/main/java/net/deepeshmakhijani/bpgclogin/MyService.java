@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
-import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,45 +31,15 @@ import okhttp3.Response;
  */
 
 public class MyService extends Service {
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-
-        // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-        return START_STICKY;
-
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.net.wifi.STATE_CHANGE");
-
-        registerReceiver(receiver, filter);
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
-
-        unregisterReceiver(receiver);
-    }
-
+    public String ssid;
+    //    Broadcast Receiver
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
 
+        //        Get shared preferences
         private SharedPreferences sharedPreferences, shared;
 
+        //        On broadcast receive
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -87,6 +56,7 @@ public class MyService extends Service {
 //            If wifi is not previously connected
                 if (!mWifi.isConnected()) {
 
+
 //                Get default username, password
                     sharedPreferences = context.getApplicationContext().getSharedPreferences("MyPref", 0);
                     shared = context.getApplicationContext().getSharedPreferences("MyPref1", 0);
@@ -96,9 +66,10 @@ public class MyService extends Service {
 //                Get wifi ssid
                     WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    String ssid = wifiInfo.getSSID();
+                    ssid = wifiInfo.getSSID();
 
-                    if (((ssid.equals("\"BPGC-HOSTEL\"") || ssid.equals("\"BPGC-WIFI\"")) && (user1 != null) && (pass1 != null))) {
+//                    Execute Login2 after 1 sec delay
+                    if ((user1 != null) && (pass1 != null)) {
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -109,65 +80,103 @@ public class MyService extends Service {
                     }
                 }
             }
-
-
-        }
-
-        //    Same Login2 function as used in MainActivity except the toast
-
-        class Login2 extends AsyncTask<String, Void, String> {
-            private OkHttpClient client = getOkHttpClient.getOkHttpClient();
-            private String result, message;
-
-            private Context c;
-
-            public Login2(Context context) {
-                c = context;
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                try {
-                    RequestBody body = new FormBody.Builder()
-                            .add("username", params[0])
-                            .add("password", params[1])
-                            .add("mode", "191")
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .url(MainActivity.URL2)
-                            .post(body)
-                            .build();
-
-                    Response response = client.newCall(request).execute();
-                    result = response.body().string();
-                    return result;
-                } catch (Exception e) {
-                    result = "ERR";
-                    return null;
-                }
-            }
-
-            protected void onPostExecute(String result) {
-//            Notification
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
-                mBuilder.setSmallIcon(R.drawable.logo_bits);
-                mBuilder.setContentTitle("MOTHERFUCKAS");
-
-                if (result != null) {
-                    String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
-                    Pattern r = Pattern.compile(pattern);
-                    Matcher m = r.matcher(result);
-                    if (m.find()) {
-                        message = m.group(1);
-                        mBuilder.setContentText(message);
-                        NotificationManager mNotificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-
-                        int notificationID = 001;
-                        mNotificationManager.notify(notificationID, mBuilder.build());
-                    }
-                }
-            }
         }
     };
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    //    This is called when the service gets started initially
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Let it continue running until it is stopped.
+        return START_STICKY;
+
+    }
+
+    //    This is the main function which is executed for the service
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.wifi.STATE_CHANGE");
+
+        registerReceiver(receiver, filter);
+
+    }
+
+    //    On Destroy - When the sevice is stopped from MainActivity
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    //    Same Login2 function as used in MainActivity except the toast
+
+    class Login2 extends AsyncTask<String, Void, String> {
+        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+        private String result, message;
+
+        private Context c;
+
+        Login2(Context context) {
+            c = context;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                RequestBody body = new FormBody.Builder()
+                        .add("username", params[0])
+                        .add("password", params[1])
+                        .add("mode", "191")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(MainActivity.URL2)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                result = response.body().string();
+                return result;
+            } catch (Exception e) {
+                result = "ERR";
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String result) {
+//            Notification Builder
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
+            mBuilder.setSmallIcon(R.drawable.logo_bits);
+            if (ssid.isEmpty()) {
+                mBuilder.setContentTitle("BPGC LOGIN");
+            }
+            mBuilder.setContentTitle("Connected to " + ssid);
+
+            if (result != null) {
+                String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(result);
+                if (m.find()) {
+//                        Get Message
+                    message = m.group(1);
+
+//                        Build notification
+                    mBuilder.setContentText(message);
+                    NotificationManager mNotificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    int notificationID = 0;
+//                        Send Notification
+                    mNotificationManager.notify(notificationID, mBuilder.build());
+                }
+            }
+        }
+    }
 }

@@ -33,12 +33,13 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     //    public static final String URL1 = "https://20.20.2.11/login.html";
     public static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
+
     EditText user_data, pass_data;
     Button login_btn, logout_btn;
     CheckBox rc, sd;
+
     private SharedPreferences sharedPreferences, shared;
     private SharedPreferences.Editor editor;
-
 
     //    Get current ssid
     public static String getCurrentSsid(Context context) {
@@ -53,12 +54,13 @@ public class MainActivity extends AppCompatActivity {
         return ssid;
     }
 
+    //    Method to start the service
     public void startService() {
         startService(new Intent(getBaseContext(), MyService.class));
 
     }
 
-    // Method to stop the service
+    //    Method to stop the service
     public void stopService() {
         stopService(new Intent(getBaseContext(), MyService.class));
     }
@@ -67,18 +69,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+//        Start MyService
         startService();
 
+//        Hide anoying cursor on activity start
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Setting the sharedPreferences
+
+//        Setting the sharedPreferences
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
         shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
+
         login_btn = (Button) findViewById(R.id.login_btn);
         logout_btn = (Button) findViewById(R.id.logout_btn);
         user_data = (EditText) findViewById(R.id.user_data);
@@ -86,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         rc = (CheckBox) findViewById(R.id.rc);
         sd = (CheckBox) findViewById(R.id.sd);
 
+//        Set Remember credeentials initially to true
         rc.setChecked(true);
 
 //        Set default username/password in edit text
@@ -122,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        Set Default and Remember Credentials
         rc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -148,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        Set password automatically when username is written
         pass_data.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -158,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //    ON RESUME
     @Override
     public void onResume() {
         super.onResume();
