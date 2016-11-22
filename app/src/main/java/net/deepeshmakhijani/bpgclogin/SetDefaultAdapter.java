@@ -16,7 +16,7 @@ import java.util.Vector;
  */
 
 public class SetDefaultAdapter extends RecyclerView.Adapter<SetDefaultAdapter.ViewHolder> {
-    Context applicationContext = Settings.getContextOfApplication();
+    Context applicationContext = SetDefault.getContextOfApplication();
     SharedPreferences shared = applicationContext.getSharedPreferences("MyPref1", 0);
     SharedPreferences.Editor editor = shared.edit();
     private Context context;

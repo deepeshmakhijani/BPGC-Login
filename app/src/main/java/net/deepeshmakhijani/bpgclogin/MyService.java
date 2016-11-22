@@ -61,6 +61,7 @@ public class MyService extends Service {
                     sharedPreferences = context.getApplicationContext().getSharedPreferences("MyPref", 0);
                     shared = context.getApplicationContext().getSharedPreferences("MyPref1", 0);
                     final String user1 = shared.getString("Default", null);
+                    final Boolean autolog = shared.getBoolean("Auto", false);
                     final String pass1 = sharedPreferences.getString(user1, null);
 
 //                Get wifi ssid
@@ -158,7 +159,7 @@ public class MyService extends Service {
             if (ssid.isEmpty()) {
                 mBuilder.setContentTitle("BPGC LOGIN");
             }
-            mBuilder.setContentTitle("Connected to " + ssid);
+            mBuilder.setContentTitle("Connecting to " + ssid);
 
             if (result != null) {
                 String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
