@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 public class SettingsMain extends AppCompatActivity {
-    CardView card1, card2;
+    CardView card1, card2, card3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,7 @@ public class SettingsMain extends AppCompatActivity {
             });
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        card3 = (CardView) findViewById(R.id.card3);
         card1 = (CardView) findViewById(R.id.card1);
         card2 = (CardView) findViewById(R.id.card2);
         card1.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +44,13 @@ public class SettingsMain extends AppCompatActivity {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(Intent.createChooser(i, "Choose Browser"));
+            }
+        });
+        card3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsMain.this, SetDefault.class);
+                startActivity(intent);
             }
         });
     }

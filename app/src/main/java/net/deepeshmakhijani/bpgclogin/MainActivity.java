@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     CheckBox rc, sd;
 
     private SharedPreferences sharedPreferences, shared;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor, editor1;
 
     //    Get current ssid
     public static String getCurrentSsid(Context context) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
         shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
-
+        editor1 = shared.edit();
         login_btn = (Button) findViewById(R.id.login_btn);
         logout_btn = (Button) findViewById(R.id.logout_btn);
         user_data = (EditText) findViewById(R.id.user_data);
@@ -125,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 if (rc.isChecked()) {
                     editor.putString(username, password);
                     editor.commit();
+                }
+                if (sd.isChecked()) {
+                    editor1.putString("Default", username);
+                    editor1.commit();
                 }
             }
         });

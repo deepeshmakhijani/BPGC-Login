@@ -20,12 +20,12 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service android:name=".MyService" />
-
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -67,6 +67,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".SetDefault"
+            android:label="Set Default Credentials"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
