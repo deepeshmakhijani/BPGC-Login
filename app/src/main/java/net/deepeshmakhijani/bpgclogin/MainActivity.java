@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         return ssid;
     }
 
-    //    Method to start the service
     public void startService() {
         startService(new Intent(getBaseContext(), MyService.class));
 
@@ -63,14 +62,11 @@ public class MainActivity extends AppCompatActivity {
     //    Method to stop the service
     public void stopService() {
         stopService(new Intent(getBaseContext(), MyService.class));
-    }
+    }    //    Method to start the service
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-//        Start MyService
-        startService();
 
 //        Hide anoying cursor on activity start
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -79,11 +75,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
+        Boolean bol = shared.getBoolean("Auto", false);
+        if (bol) {
+            startService();
+        } else {
+            stopService();
+        }
 
 //        Setting the sharedPreferences
         sharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = sharedPreferences.edit();
-        shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
+
         editor1 = shared.edit();
         login_btn = (Button) findViewById(R.id.login_btn);
         logout_btn = (Button) findViewById(R.id.logout_btn);

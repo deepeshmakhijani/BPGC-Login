@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 public class SettingsMain extends AppCompatActivity {
@@ -64,12 +65,37 @@ public class SettingsMain extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        checkBox.setChecked(false);
-        if (checkBox.onCheckIsTextEditor()) {
-            Toast.makeText(context, "Auto Login enabled", Toast.LENGTH_SHORT).show();
-            editor.putBoolean("Auto", true);
-            editor.commit();
+        Boolean b1 = sharedPreferences.getBoolean("Auto", false);
+        if (b1) {
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
         }
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Toast.makeText(context, "Auto Login Enabled", Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("Auto", true);
+                    editor.commit();
+                    startService();
+                } else {
+                    Toast.makeText(context, "Auto Login Disabled", Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("Auto", false);
+                    editor.commit();
+                    stopService();
+                }
+            }
+        });
     }
 
+    public void startService() {
+        startService(new Intent(getBaseContext(), MyService.class));
+
+    }
+
+    //    Method to stop the service
+    public void stopService() {
+        stopService(new Intent(getBaseContext(), MyService.class));
+    }
 }
