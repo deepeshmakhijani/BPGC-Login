@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         pass1 = sharedPreferences.getString(user1, null);
         pass_data.setText(pass1);
 
-
 //        LOGIN BUTTON
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
