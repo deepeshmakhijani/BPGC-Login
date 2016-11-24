@@ -197,20 +197,25 @@
         android:id="@+id/d2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/d3"
         android:layout_centerHorizontal="true"
         android:text="Deepesh Makhijani"
+        android:layout_above="@+id/text_empty_message1"
         android:textColor="@android:color/black" />
-
     <TextView
-        android:id="@+id/d3"
         android:layout_width="wrap_content"
+        android:id="@+id/text_empty_message1"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="6dp"
-        android:text="Abhineet Nigam"
-        android:textColor="@android:color/black" />
-
+        android:textColor="@android:color/black"
+        android:layout_above="@+id/text_empty_message"
+        android:text="MOBILE APPLICATIONS CLUB"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/text_empty_message"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:layout_alignParentBottom="true"
+        android:text="View Source Code"/>
 
 </RelativeLayout>

@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //    ON RESUME
+//        ON RESUME
     @Override
     public void onResume() {
         super.onResume();
@@ -254,10 +254,10 @@ public class MainActivity extends AppCompatActivity {
                 if (m.find()) {
                     message = m.group(1);
                 } else {
-                    message = "Kindly Reconnect the WiFi";
+                    message = "Wait for the issue to be resolved";
                 }
             } else {
-                message = "Kindly Reconnect the WiFi";
+                message = "Reconnect the WiFi!";
             }
             Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
         }

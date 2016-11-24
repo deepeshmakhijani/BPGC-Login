@@ -11,12 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsMain extends AppCompatActivity {
     CardView card1, card2, card3;
     CheckBox checkBox;
     Context context;
+    TextView textView;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     @Override
@@ -35,6 +37,7 @@ public class SettingsMain extends AppCompatActivity {
             });
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        textView=(TextView)findViewById(R.id.text_empty_message);
         card3 = (CardView) findViewById(R.id.card3);
         card1 = (CardView) findViewById(R.id.card1);
         card2 = (CardView) findViewById(R.id.card2);
@@ -47,6 +50,15 @@ public class SettingsMain extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SettingsMain.this, Settings.class);
                 startActivity(intent);
+            }
+        });
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://github.com/deepeshmakhijani/BPGC-Login";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(Intent.createChooser(i, "Choose Browser"));
             }
         });
         card2.setOnClickListener(new View.OnClickListener() {
