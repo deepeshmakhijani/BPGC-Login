@@ -154,7 +154,7 @@ public class MyService extends Service {
         protected void onPostExecute(String result) {
 //            Notification Builder
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
-            mBuilder.setSmallIcon(R.drawable.logo_bits);
+            mBuilder.setSmallIcon(R.drawable.ic_wifi_black_24dp);
             if (ssid.isEmpty()) {
                 mBuilder.setContentTitle("BPGC LOGIN");
             }
