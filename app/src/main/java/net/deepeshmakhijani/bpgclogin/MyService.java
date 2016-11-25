@@ -154,7 +154,7 @@ public class MyService extends Service {
         protected void onPostExecute(String result) {
 //            Notification Builder
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
-            mBuilder.setSmallIcon(R.drawable.ic_wifi_black_24dp);
+
             if (ssid.isEmpty()) {
                 mBuilder.setContentTitle("BPGC LOGIN");
             }
@@ -167,6 +167,13 @@ public class MyService extends Service {
                 if (m.find()) {
 //                        Get Message
                     message = m.group(1);
+
+                    if (message.equals("You have successfully logged in")){
+                        mBuilder.setSmallIcon(R.drawable.wifi);
+                    }
+                    else {
+                        mBuilder.setSmallIcon(R.drawable.wifi_off);
+                    }
 
 //                        Build notification
                     mBuilder.setContentText(message);
