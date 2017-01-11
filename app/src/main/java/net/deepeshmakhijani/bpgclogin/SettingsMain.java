@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsMain extends AppCompatActivity {
-    CardView card1, card2, card3;
+    CardView card1, card2, card3, card4;
     CheckBox checkBox;
     Context context;
     TextView textView;
@@ -77,7 +77,7 @@ public class SettingsMain extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        Boolean b1 = sharedPreferences.getBoolean("Auto", false);
+        Boolean b1 = sharedPreferences.getBoolean("Auto", true);
         if (b1) {
             checkBox.setChecked(true);
         } else {

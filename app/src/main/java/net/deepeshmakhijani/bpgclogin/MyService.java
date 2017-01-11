@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -32,12 +31,11 @@ import okhttp3.Response;
 
 public class MyService extends Service {
 
-    public String ssid;
     //    Broadcast Receiver
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
 
         //        Get shared preferences
-        private SharedPreferences sharedPreferences, shared;
+        public SharedPreferences sharedPreferences, shared;
 
         //        On broadcast receive
         @Override
@@ -61,20 +59,17 @@ public class MyService extends Service {
                     sharedPreferences = context.getApplicationContext().getSharedPreferences("MyPref", 0);
                     shared = context.getApplicationContext().getSharedPreferences("MyPref1", 0);
                     final String user1 = shared.getString("Default", null);
-                    final String pass1 = sharedPreferences.getString(user1, null);
+                    if (user1 != null){
+                        final String pass1 = sharedPreferences.getString(user1, null);
 
-//                Get wifi ssid
-                    WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    ssid = wifiInfo.getSSID();
+//                   Get wifi ssid
 
 //                    Execute Login2 after 1 sec delay
-                    if ((user1 != null) && (pass1 != null)) {
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                new Login2(c).execute(user1, pass1);
+                                new Login1(c).execute(user1, pass1);
                             }
                         }, 1000);
                     }
@@ -146,7 +141,6 @@ public class MyService extends Service {
                 result = response.body().string();
                 return result;
             } catch (Exception e) {
-                result = "ERR";
                 return null;
             }
         }
@@ -155,10 +149,7 @@ public class MyService extends Service {
 //            Notification Builder
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
 
-            if (ssid.isEmpty()) {
-                mBuilder.setContentTitle("BPGC LOGIN");
-            }
-            mBuilder.setContentTitle("Connecting to " + ssid);
+            mBuilder.setContentTitle("BPGC LOGIN");
 
             if (result != null) {
                 String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
@@ -183,6 +174,66 @@ public class MyService extends Service {
 //                        Send Notification
                     mNotificationManager.notify(notificationID, mBuilder.build());
                 }
+            }
+        }
+
+
+        }
+
+    class Login1 extends AsyncTask<String, Void, String> {
+        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+        private String result;
+        private Context c;
+
+        Login1(Context context){
+            c = context;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                RequestBody body = new FormBody.Builder()
+                        .add("username", params[0])
+                        .add("password", params[1])
+                        .add("buttonClicked", "4")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(MainActivity.URL1)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                result = response.body().string();
+                return result;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String result) {
+            String user1 = getSharedPreferences("MyPref1", 0).getString("Default", null);
+            if (result != null) {
+                String pattern = Pattern.quote("<title>") + "(.*?)" + Pattern.quote("</title>");
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(result);
+
+                if (m.find()) {
+                    switch (m.group(1)) {
+                        case "Web Authentication Failure":
+                        case "Logged In":
+                            new Login2(c).execute(user1, getSharedPreferences("MyPref", 0).getString(user1, null));
+                            break;
+                        case "Web Authentication":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            else {
+                new Login2(c).execute(user1, getSharedPreferences("MyPref", 0).getString(user1, null));
+
             }
         }
     }

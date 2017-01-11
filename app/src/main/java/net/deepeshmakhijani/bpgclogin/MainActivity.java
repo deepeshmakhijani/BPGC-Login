@@ -1,12 +1,7 @@
 package net.deepeshmakhijani.bpgclogin;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,10 +26,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-    //    public static final String URL1 = "https://20.20.2.11/login.html";
+    public static final String URL1 = "https://20.20.2.11/login.html";
     public static final String URL2 = "https://10.1.0.10:8090/httpclient.html";
 
-    EditText user_data, pass_data;
+    public EditText user_data, pass_data;
     Button login_btn, logout_btn;
     CheckBox rc, sd;
 
@@ -42,17 +37,17 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor, editor1;
 
     //    Get current ssid
-    public static String getCurrentSsid(Context context) {
-        String ssid = null;
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (networkInfo.isConnected()) {
-            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            ssid = connectionInfo.getSSID();
-        }
-        return ssid;
-    }
+//    public static String getCurrentSsid(Context context) {
+//        String ssid = null;
+//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//        if (networkInfo.isConnected()) {
+//            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+//            ssid = connectionInfo.getSSID();
+//        }
+//        return ssid;
+//    }
 
     public void startService() {
         startService(new Intent(getBaseContext(), MyService.class));
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         shared = getApplicationContext().getSharedPreferences("MyPref1", 0); // 0 - for private mode
-        Boolean bol = shared.getBoolean("Auto", false);
+        Boolean bol = shared.getBoolean("Auto", true);
         if (bol) {
             startService();
         } else {
@@ -95,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
         rc = (CheckBox) findViewById(R.id.rc);
         sd = (CheckBox) findViewById(R.id.sd);
 
-//        Set Remember credeentials initially to true
+//        Set Remember credentials initially to true
         rc.setChecked(true);
+        sd.setChecked(true);
 
 //        Set default username/password in edit text
         String user1, pass1;
@@ -113,15 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 String username = user_data.getText().toString().trim();
                 String password = pass_data.getText().toString().trim();
 
-                String wifi = getCurrentSsid(MainActivity.this);
-
-                if (wifi == null) {
-                    Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
-                } else if (wifi.equals("\"BPGC-HOSTEL\"") || wifi.equals("\"BPGC-WIFI\"")) {
-                    new Login2().execute(username, password);
-                } else {
-                    new Login2().execute(username, password);
-                }
+                new Login1().execute(username, password);
 
 //                Remember Credentials
                 if (rc.isChecked()) {
@@ -154,12 +142,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = user_data.getText().toString().trim();
                 String password = pass_data.getText().toString().trim();
-                String wifi = getCurrentSsid(MainActivity.this);
-                if (wifi == null) {
-                    Toast.makeText(MainActivity.this, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
-                } else {
-                    new Logout().execute(username, password);
-                }
+                new Logout().execute(username, password);
             }
         });
 
@@ -225,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
 //                Generate request body
+
                 RequestBody body = new FormBody.Builder()
                         .add("username", params[0])
                         .add("password", params[1])
@@ -240,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                 result = response.body().string();
                 return result;
             } catch (Exception e) {
-                result = "ERR";
                 return null;
             }
         }
@@ -287,7 +270,6 @@ public class MainActivity extends AppCompatActivity {
                 result = response.body().string();
                 return result;
             } catch (Exception e) {
-                result = "ERR";
                 return null;
             }
         }
@@ -310,7 +292,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*
 //    Login to https://20.20.2.11/login.html followed by https://10.1.0.10:8090/httpclient.html
     private class Login1 extends AsyncTask<String, Void, String> {
         private String message;
@@ -319,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-
             try {
                 RequestBody body = new FormBody.Builder()
                         .add("username", params[0])
@@ -341,15 +321,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
+            String username = user_data.getText().toString().trim();
+            String password = pass_data.getText().toString().trim();
             if (result != null) {
                 String pattern = Pattern.quote("<title>") + "(.*?)" + Pattern.quote("</title>");
                 Pattern r = Pattern.compile(pattern);
                 Matcher m = r.matcher(result);
+
                 if (m.find()) {
                     switch (m.group(1)) {
                         case "Web Authentication Failure":
                         case "Logged In":
-                            new Login2().execute();
+                            new Login2().execute(username, password);
+                            message = null;
                             break;
                         case "Web Authentication":
                             message = "Please check your credentials";
@@ -363,12 +347,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else {
-                message = "Kindly Reconnect the WiFi";
+                message = null;
+                new Login2().execute(username, password);
             }
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            if (message != null){
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
         }
     }
-    */
 }
 
 
