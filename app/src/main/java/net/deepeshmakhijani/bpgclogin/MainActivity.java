@@ -1,7 +1,12 @@
 package net.deepeshmakhijani.bpgclogin;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,18 +41,18 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences, shared;
     private SharedPreferences.Editor editor, editor1;
 
-    //    Get current ssid
-//    public static String getCurrentSsid(Context context) {
-//        String ssid = null;
-//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        if (networkInfo.isConnected()) {
-//            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-//            ssid = connectionInfo.getSSID();
-//        }
-//        return ssid;
-//    }
+//        Get current ssid
+    public static String getCurrentSsid(Context context) {
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            ssid = connectionInfo.getSSID();
+        }
+        return ssid;
+    }
 
     public void startService() {
         startService(new Intent(getBaseContext(), MyService.class));
@@ -109,7 +114,13 @@ public class MainActivity extends AppCompatActivity {
                 String username = user_data.getText().toString().trim();
                 String password = pass_data.getText().toString().trim();
 
-                new Login1().execute(username, password);
+                String wifi = getCurrentSsid(MainActivity.this);
+
+                if (wifi == null) {
+                    Toast.makeText(MainActivity.this, "Connect to WiFi Network\nOr check if Mobile Data is turned off", Toast.LENGTH_SHORT).show();
+                } else {
+                    new Login1().execute(username, password);
+                }
 
 //                Remember Credentials
                 if (rc.isChecked()) {
