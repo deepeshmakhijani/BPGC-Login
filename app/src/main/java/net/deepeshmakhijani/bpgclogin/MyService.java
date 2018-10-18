@@ -78,7 +78,7 @@ public class MyService extends Service {
                                 new Login(c).execute(user1, pass1);
 
                             }
-                        }, 3000);
+                        }, 5000);
                     }
                 }
             }
