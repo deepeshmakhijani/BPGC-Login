@@ -1,5 +1,8 @@
 package net.deepeshmakhijani.bpgclogin;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -11,10 +14,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
+import android.widget.Toast;
+import android.support.v4.app.NotificationCompat;
+
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +65,7 @@ public class MyService extends Service {
                     sharedPreferences = context.getApplicationContext().getSharedPreferences("MyPref", 0);
                     shared = context.getApplicationContext().getSharedPreferences("MyPref1", 0);
                     final String user1 = shared.getString("Default", null);
-                    if (user1 != null){
+                    if (user1 != null) {
                         final String pass1 = sharedPreferences.getString(user1, null);
 
 //                   Get wifi ssid
@@ -69,9 +75,10 @@ public class MyService extends Service {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                new Login1(c).execute(user1, pass1);
+                                new Login(c).execute(user1, pass1);
+
                             }
-                        }, 1000);
+                        }, 3000);
                     }
                 }
             }
@@ -113,13 +120,13 @@ public class MyService extends Service {
 
     //    Same Login2 function as used in MainActivity except the toast
 
-    class Login2 extends AsyncTask<String, Void, String> {
-        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+    class Login extends AsyncTask<String, Void, String> {
+        private OkHttpClient client = new OkHttpClient();
         private String result, message;
 
         private Context c;
 
-        Login2(Context context) {
+        Login(Context context) {
             c = context;
         }
 
@@ -133,7 +140,7 @@ public class MyService extends Service {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(MainActivity.URL2)
+                        .url("https://campnet.bits-goa.ac.in:8090/login.xml")
                         .post(body)
                         .build();
 
@@ -145,95 +152,51 @@ public class MyService extends Service {
             }
         }
 
+        private void createNotificationChannel() {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                CharSequence name = "Auto Login";
+                String description = "Automatic Login";
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel(description, name, importance);
+                channel.setDescription(description);
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+
         protected void onPostExecute(String result) {
-//            Notification Builder
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
+            //   Notification Builder
+            createNotificationChannel();
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c, "Automatic Login");
 
             mBuilder.setContentTitle("BPGC LOGIN");
 
+
             if (result != null) {
+
                 String pattern = Pattern.quote("<message><![CDATA[") + "(.*?)" + Pattern.quote("]]></message>");
                 Pattern r = Pattern.compile(pattern);
                 Matcher m = r.matcher(result);
                 if (m.find()) {
-//                        Get Message
+
                     message = m.group(1);
 
-                    if (message.equals("You have successfully logged in")){
+                    if (message.equals("You have successfully logged in")) {
                         mBuilder.setSmallIcon(R.drawable.wifi);
-                    }
-                    else {
+                    } else {
                         mBuilder.setSmallIcon(R.drawable.wifi_off);
                     }
 
-//                        Build notification
                     mBuilder.setContentText(message);
                     NotificationManager mNotificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
 
-                    int notificationID = 0;
-//                        Send Notification
-                    mNotificationManager.notify(notificationID, mBuilder.build());
+                    mNotificationManager.notify(001, mBuilder.build());
                 }
-            }
-        }
-
-
-        }
-
-    class Login1 extends AsyncTask<String, Void, String> {
-        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
-        private String result;
-        private Context c;
-
-        Login1(Context context){
-            c = context;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                RequestBody body = new FormBody.Builder()
-                        .add("username", params[0])
-                        .add("password", params[1])
-                        .add("buttonClicked", "4")
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(MainActivity.URL1)
-                        .post(body)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-                result = response.body().string();
-                return result;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String result) {
-            String user1 = getSharedPreferences("MyPref1", 0).getString("Default", null);
-            if (result != null) {
-                String pattern = Pattern.quote("<title>") + "(.*?)" + Pattern.quote("</title>");
-                Pattern r = Pattern.compile(pattern);
-                Matcher m = r.matcher(result);
-
-                if (m.find()) {
-                    switch (m.group(1)) {
-                        case "Web Authentication Failure":
-                        case "Logged In":
-                            new Login2(c).execute(user1, getSharedPreferences("MyPref", 0).getString(user1, null));
-                            break;
-                        case "Web Authentication":
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            else {
-                new Login2(c).execute(user1, getSharedPreferences("MyPref", 0).getString(user1, null));
-
             }
         }
     }

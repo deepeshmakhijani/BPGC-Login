@@ -5,7 +5,7 @@
     android:id="@+id/content_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#9f7a51"
+    android:background="@color/colorPrimaryDark"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="net.deepeshmakhijani.bpgclogin.Settings"
     tools:showIn="@layout/activity_settings">
@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:textColor="@color/colorText"
         android:text="@string/Default"
         android:textSize="15dp"
         android:visibility="visible" />

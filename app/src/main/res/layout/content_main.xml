@@ -5,10 +5,13 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@color/colorBackground"
+    android:paddingLeft="32dp"
+    android:paddingRight="32dp"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context="net.deepeshmakhijani.bpgclogin.MainActivity">
+
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/user_text"
@@ -17,6 +20,7 @@
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:theme="@style/TextLabel"
         android:layout_marginTop="110dp">
 
         <EditText
@@ -24,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
+            android:textColor="#fff"
             android:inputType="textEmailAddress" />
     </android.support.design.widget.TextInputLayout>
 
@@ -32,11 +37,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/user_text"
-
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="4dp"
+        android:theme="@style/TextLabel"
         app:passwordToggleEnabled="false">
 
         <EditText
@@ -44,10 +49,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
+            android:textColor="#fff"
+
             android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
 
-    <Button
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
         android:id="@+id/login_btn"
         android:layout_width="140dp"
         android:layout_height="wrap_content"
@@ -57,7 +64,11 @@
         android:background="@drawable/circle_button"
         android:elevation="4dp"
         android:text="Login"
-        android:textSize="14sp" />
+        android:textColor="#000"
+        android:textSize="14sp"
+        app:spinning_bar_width="4dp"
+        app:spinning_bar_color="@color/colorAccent"
+        app:spinning_bar_padding="6dp"/>
 
     <Button
         android:id="@+id/logout_btn"
@@ -69,7 +80,7 @@
         android:layout_marginTop="5dp"
         android:elevation="4dp"
         android:text="Logout"
-        android:textColor="@drawable/logout_btn" />
+        android:textColor="@color/colorText" />
 
     <CheckBox
         android:id="@+id/rc"
@@ -80,6 +91,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="5dp"
+        android:textColor="@color/colorText"
         android:text="Remember Credentials"
         android:textSize="14sp" />
 
@@ -89,6 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/rc"
+        android:textColor="@color/colorText"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="5dp"

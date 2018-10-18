@@ -34,53 +34,30 @@ public class WifiBroadcast extends BroadcastReceiver {
 
         NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
-////        Detect changes in wifi
-//        if (info != null && info.isConnected()) {
-//            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//            NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//
-////            If wifi is not previously connected
-//            if (!mWifi.isConnected()) {
-//
-//
 //                Get default username, password
         sharedPreferences = context.getApplicationContext().getSharedPreferences("MyPref", 0);
         shared = context.getApplicationContext().getSharedPreferences("MyPref1", 0);
         final String user1 = shared.getString("Default", null);
         final String pass1 = sharedPreferences.getString(user1, null);
-        //     Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show();
 //                Get wifi ssid
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         ssid = wifiInfo.getSSID();
         if (ssid == null) {
             Toast.makeText(c, "Connect to a WIFI Network", Toast.LENGTH_SHORT).show();
-        } else if (ssid.equals("\"BPGC-HOSTEL\"") || ssid.equals("\"BPGC-WIFI\"")) {
-            new Login2(c).execute(user1, pass1);
         } else {
-            new Login2(c).execute(user1, pass1);
+            new Login(c).execute(user1, pass1);
         }
-
-////                    Execute Login2 after 1 sec delay
-//        if ((user1 != null) && (pass1 != null)) {
-//            final Handler handler = new Handler();
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    new Login2(c).execute(user1, pass1);
-//                }
-//            }, 10);
-//        }
     }
 
 
-    class Login2 extends AsyncTask<String, Void, String> {
-        private OkHttpClient client = getOkHttpClient.getOkHttpClient();
+    class Login extends AsyncTask<String, Void, String> {
+        private OkHttpClient client = new OkHttpClient();
         private String result, message;
 
         private Context c;
 
-        Login2(Context context) {
+        Login(Context context) {
             c = context;
         }
 
@@ -94,7 +71,7 @@ public class WifiBroadcast extends BroadcastReceiver {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(MainActivity.URL2)
+                        .url(MainActivity.URL)
                         .post(body)
                         .build();
 
